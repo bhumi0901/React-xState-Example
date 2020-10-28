@@ -1,6 +1,6 @@
-import Stories from "components/stories";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, Fragment } from "react";
 import { MachineContext } from "state";
+import { NavLink } from "react-router-dom";
 
 function Home() {
   const [machine, sendToMachine] = useContext(MachineContext);
@@ -10,9 +10,9 @@ function Home() {
   useEffect(() => {
     sendToMachine("LOAD_STORIES");
   }, []);
-  console.log(stories);
+
   return (
-    <div className="">
+    <div style={{ padding: 20 }}>
       {machine.matches("list.loading") && <h2>Loading...</h2>}
       {machine.matches("list.fail") && (
         <div style={{ color: "red" }}>
@@ -22,7 +22,26 @@ function Home() {
       <div style={{ display: "flex" }}>
         <div style={{ display: "flex" }}>
           {stories && stories.length > 0 && (
-            <Stories stories={stories} sendToMachine={sendToMachine} />
+            <div className="">
+              {stories.map((storyItem, index) => {
+                return (
+                  <Fragment key={"story_" + storyItem.id}>
+                    <div className="story-item-container">
+                      <NavLink to={"/comments/" + storyItem.id}>
+                        <h4>{storyItem.title}</h4>
+                      </NavLink>
+                      <h5>
+                        Comments: {storyItem.comments_count}
+                        <b style={{ marginLeft: "100px" }}>
+                          By: {storyItem.user}
+                        </b>
+                      </h5>
+                    </div>
+                    <hr />
+                  </Fragment>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>
